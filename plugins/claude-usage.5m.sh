@@ -15,8 +15,11 @@ if [ $? -eq 0 ] && [ -n "$RAW_DATA" ]; then
     function run(argv) {
       try {
         var data = JSON.parse(argv[0]);
-        var current = data.monthly.find(m => m.month === '$TARGET_MONTH');
-        return current ? '$' + current.totalCost.toFixed(2) : '$0.00';
+        if (data && data.monthly && Array.isArray(data.monthly)) {
+          var current = data.monthly.find(m => m && m.month === '$TARGET_MONTH');
+          return current && current.totalCost !== undefined ? '$' + current.totalCost.toFixed(2) : '$0.00';
+        }
+        return '$0.00';
       } catch (e) {
         return 'Parse Error';
       }
